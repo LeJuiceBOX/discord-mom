@@ -1,4 +1,6 @@
 ﻿using System;
+using System.IO;
+using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
 using Discord;
@@ -16,13 +18,13 @@ namespace Mom {
 
 		public StartupService(IServiceProvider provider, DiscordSocketClient discord, CommandService commands, IConfigurationRoot config) {
 			_provider = provider;
-			_config = config;
 			_discord = discord;
 			_commands = commands;
+			_config = config;
 		}
 
 		public async Task StartAsync() {
-			string token = _config["token"];
+			string token = File.ReadLines("token.txt").First(); ;
 			if (string.IsNullOrEmpty(token)) {
 				Console.WriteLine("No discord token.");
 				return;
