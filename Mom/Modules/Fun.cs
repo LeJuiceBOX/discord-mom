@@ -22,18 +22,8 @@ namespace Mom.Modules {
 			JArray raw = JArray.Parse(result);
 			JObject postData = JObject.Parse(raw[0]["data"]["children"][0]["data"].ToString()); // gets rid of meta data
 			await SendRedditPost(postData);
+			await Context.Message.DeleteAsync();
 		}
-
-		[Command("greentext")]
-		public async Task command_greentext() {
-			var client = new HttpClient();
-			var result = await client.GetStringAsync("https://reddit.com/r/greentext/random.json?limit=1");
-			JArray raw = JArray.Parse(result);
-			JObject postData = JObject.Parse(raw[0]["data"]["children"][0]["data"].ToString()); // gets rid of meta data
-			await SendRedditPost(postData);
-		}
-		[Command("gt")]
-		public async Task command_gt() { await command_greentext(); }
 
 		[Command("reddit")]
 		public async Task command_reddit(string sub) {
@@ -43,6 +33,7 @@ namespace Mom.Modules {
 			JArray raw = JArray.Parse(result);
 			JObject postData = JObject.Parse(raw[0]["data"]["children"][0]["data"].ToString()); // gets rid of meta data
 			await SendRedditPost(postData);
+			await Context.Message.DeleteAsync();
 		}
 
 		[Command("randomreddit")]
@@ -54,6 +45,7 @@ namespace Mom.Modules {
 			JArray raw = JArray.Parse(result);
 			JObject postData = JObject.Parse(raw[0]["data"]["children"][0]["data"].ToString()); // gets rid of meta data
 			await SendRedditPost(postData);
+			await Context.Message.DeleteAsync();
 		}
 
 		////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
