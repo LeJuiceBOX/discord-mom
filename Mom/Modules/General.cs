@@ -62,5 +62,18 @@ namespace Mom.Modules {
 			var embed = builder.Build();
 			await Context.Channel.SendMessageAsync(null, false, embed);
 		}
+
+		[Command("poll")]
+		public async Task command_poll(string pollName) {
+			var builder = new EmbedBuilder()
+				.WithTitle($"{pollName}")
+				.WithDescription("React to vote.")
+				.WithColor(new Color(80, 120, 255));
+			var embed = builder.Build();
+			var msg = await Context.Channel.SendMessageAsync(null, false, embed);
+			Emoji[] emotes = { new Emoji("👍"), new Emoji("👎") };
+			await msg.AddReactionAsync(emotes[0], RequestOptions.Default);
+			await msg.AddReactionAsync(emotes[1], RequestOptions.Default);
+		}
 	}
 }

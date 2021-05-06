@@ -34,7 +34,7 @@ namespace Mom.Services {
 				var result = await _commands.ExecuteAsync(context, pos, _provider);
 				if (!result.IsSuccess) {
 					var reason = result.Error;
-					await context.Channel.SendMessageAsync($"**An error occured:** /n {reason}");
+					await context.Channel.SendMessageAsync($"**An error occured:** `{reason}`");
 					Console.WriteLine("Error: "+reason);
 				}
 			}
@@ -42,6 +42,7 @@ namespace Mom.Services {
 
 		private Task OnReady() {
 			Console.WriteLine($"Connected as {_discord.CurrentUser.Username}#{_discord.CurrentUser.Discriminator}.");
+			_discord.SetGameAsync("the kids",null,ActivityType.Watching);
 			return Task.CompletedTask;
 		}
 	}
