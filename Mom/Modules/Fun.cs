@@ -21,7 +21,7 @@ namespace Mom.Modules {
 			var result = await client.GetStringAsync("https://reddit.com/r/dankmemes/random.json?limit=1");
 			JArray raw = JArray.Parse(result);
 			JObject postData = JObject.Parse(raw[0]["data"]["children"][0]["data"].ToString()); // gets rid of meta data
-			await SendRedditPost(postData);
+			await EmbedRedditPost(postData);
 			await Context.Message.DeleteAsync();
 		}
 
@@ -32,7 +32,7 @@ namespace Mom.Modules {
 			if (result == null) { Console.WriteLine("Invalid subreddit.");  return; }
 			JArray raw = JArray.Parse(result);
 			JObject postData = JObject.Parse(raw[0]["data"]["children"][0]["data"].ToString()); // gets rid of meta data
-			await SendRedditPost(postData);
+			await EmbedRedditPost(postData);
 			await Context.Message.DeleteAsync();
 		}
 
@@ -44,13 +44,13 @@ namespace Mom.Modules {
 			var result = await client.GetStringAsync($"https://reddit.com/r/{sub}/random.json?limit=1");
 			JArray raw = JArray.Parse(result);
 			JObject postData = JObject.Parse(raw[0]["data"]["children"][0]["data"].ToString()); // gets rid of meta data
-			await SendRedditPost(postData);
+			await EmbedRedditPost(postData);
 			await Context.Message.DeleteAsync();
 		}
 
 		////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-		private async Task SendRedditPost(JObject postData) {
+		private async Task EmbedRedditPost(JObject postData) {
 			var builder = new EmbedBuilder()
 				.WithColor(new Color(255, 69, 0))
 				.WithTitle(postData["title"].ToString())
