@@ -13,8 +13,7 @@ namespace Mom {
 		public static IServiceProvider _provider;
 		private readonly DiscordSocketClient _discord;
 		private readonly CommandService _commands;
-		private readonly IConfigurationRoot _config;
-
+		public static IConfigurationRoot _config;
 
 		public StartupService(IServiceProvider provider, DiscordSocketClient discord, CommandService commands, IConfigurationRoot config) {
 			_provider = provider;

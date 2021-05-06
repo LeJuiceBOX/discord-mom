@@ -16,6 +16,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Update="subreddits.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="_config.yaml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
