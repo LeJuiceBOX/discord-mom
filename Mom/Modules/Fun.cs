@@ -16,7 +16,7 @@ namespace Mom.Modules {
 		private Random random = new Random();
 
 		[Command("meme")]
-		public async Task command_meme() {
+		public async Task CMD_meme() {
 			var client = new HttpClient();
 			var result = await client.GetStringAsync("https://reddit.com/r/dankmemes/random.json?limit=1");
 			JArray raw = JArray.Parse(result);
@@ -26,7 +26,7 @@ namespace Mom.Modules {
 		}
 
 		[Command("reddit")]
-		public async Task command_reddit(string sub) {
+		public async Task CMD_reddit(string sub) {
 			var client = new HttpClient();
 			var result = await client.GetStringAsync($"https://reddit.com/r/{sub}/random.json?limit=1");
 			if (result == null) { Console.WriteLine("Invalid subreddit.");  return; }
@@ -37,7 +37,7 @@ namespace Mom.Modules {
 		}
 
 		[Command("randomreddit")]
-		public async Task command_randomreddit() {
+		public async Task CMD_randomreddit() {
 			string[] subFile = File.ReadAllLines("subreddits.txt");
 			string sub = subFile[random.Next(0, subFile.Length)];
 			var client = new HttpClient();

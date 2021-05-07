@@ -1,49 +1,60 @@
 ﻿using System;
-using System.Reflection;
+using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
 using Discord;
 using Discord.Commands;
 using Discord.WebSocket;
+using Discord.Addons.Hosting;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
+using System.Threading;
+using System.Reflection;
 
 namespace Mom.Services {
-	class CommandHandler {
+	public class CommandHandler : InitializedService {
 
-		public static IServiceProvider _provider;
-		public static DiscordSocketClient _discord;
-		public static CommandService _commands;
-		public static IConfigurationRoot _config;
+		public readonly IServiceProvider _provider;
+		public readonly DiscordSocketClient _client;
+		public readonly CommandService _service;
+		public readonly IConfiguration _config;
 
-		public CommandHandler(DiscordSocketClient discord, CommandService commands, IConfigurationRoot config, IServiceProvider provider) {
+		public CommandHandler(IServiceProvider provider, DiscordSocketClient client, CommandService service, IConfiguration config) {
 			_provider = provider;
 			_config = config;
-			_discord = discord;
-			_commands = commands;
+			_client = client;
+			_service = service;
+		}
 
-			_discord.Ready += OnReady;
-			_discord.MessageReceived += OnMessageRecieved;
+		public override async Task InitializeAsync(CancellationToken cancellationToken)
+		{
+			_client.Ready += OnReady;
+			_client.MessageReceived += OnMessageRecieved;
+			_service.CommandExecuted += OnCommandExecuted;
+			await _service.AddModulesAsync(Assembly.GetEntryAssembly(), _provider);
+		}
+
+		private async Task OnReady() {
+			Console.WriteLine("Bot started.");
+			await _client.SetGameAsync("the kids.", null, ActivityType.Watching);
 		}
 
 		private async Task OnMessageRecieved(SocketMessage arg) {
-			var msg = arg as SocketUserMessage;
-			if (msg.Author.IsBot) return;
+			if (!(arg is SocketUserMessage message)) return;
+			if (message.Source != MessageSource.User) return;
 
-			var context = new SocketCommandContext(_discord, msg);
-			int pos = 0;
-			if (msg.HasStringPrefix( _config["prefix"],ref pos) || msg.HasMentionPrefix(_discord.CurrentUser, ref pos)) {
-				var result = await _commands.ExecuteAsync(context, pos, _provider);
-				if (!result.IsSuccess) {
-					var reason = result.Error;
-					await context.Channel.SendMessageAsync($"**An error occured:** `{reason}`");
-					Console.WriteLine("Error: "+reason);
-				}
-			}
+			var argPos = 0;
+			if (!message.HasStringPrefix(_config["prefix"], ref argPos) && !message.HasMentionPrefix(_client.CurrentUser,ref argPos)) return;
+
+			var context = new SocketCommandContext(_client, message);
+			await _service.ExecuteAsync(context, argPos, _provider);
 		}
 
-		private Task OnReady() {
-			Console.WriteLine($"Connected as {_discord.CurrentUser.Username}#{_discord.CurrentUser.Discriminator}.");
-			_discord.SetGameAsync("the kids",null,ActivityType.Watching);
-			return Task.CompletedTask;
+		private async Task OnCommandExecuted(Optional<CommandInfo> command, ICommandContext context,IResult result) {
+			if (command.IsSpecified && !result.IsSuccess) await context.Channel.SendMessageAsync($"**An error occured:** ```{result}```");
 		}
+
 	}
 }

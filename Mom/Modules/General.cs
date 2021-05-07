@@ -9,13 +9,14 @@ using Microsoft.Extensions.Configuration;
 
 namespace Mom.Modules {
 	public class General : ModuleBase {
+
 		[Command("ping")]
-		public async Task command_ping() {
+		public async Task CMD_ping() {
 			await Context.Channel.SendMessageAsync("Pong!");
 		}
 
 		[Command("info")]
-		public async Task command_myinfo(SocketGuildUser user = null) {
+		public async Task CMD_myinfo(SocketGuildUser user = null) {
 			if (user == null) {
 				var builder = new EmbedBuilder()
 					.WithTitle($"{Context.User.Username}'s user information.")
@@ -50,7 +51,7 @@ namespace Mom.Modules {
 		}
 
 		[Command("server")]
-		public async Task command_server() {
+		public async Task CMD_server() {
 			var builder = new EmbedBuilder()
 				.WithThumbnailUrl(Context.Guild.IconUrl)
 				.WithTitle($"{Context.Guild.Name} Information")
@@ -64,7 +65,7 @@ namespace Mom.Modules {
 		}
 
 		[Command("poll")]
-		public async Task command_poll(string pollName) {
+		public async Task CMD_poll(string pollName) {
 			var builder = new EmbedBuilder()
 				.WithTitle($"{pollName}")
 				.WithDescription("React to vote.")
